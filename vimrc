@@ -45,8 +45,6 @@ set nocompatible              " be iMproved, required
     Plugin 'scrooloose/nerdtree'
     Plugin 'chrisbra/Colorizer'
     Plugin 'Valloric/YouCompleteMe'
-    Plugin 'wookayin/vim-typora'
-    Plugin 'itspriddle/vim-marked'
     Plugin 'NLKNguyen/papercolor-theme'
     " All Plugins must be added before the following line
     call vundle#end()            " required
@@ -79,6 +77,12 @@ set nocompatible              " be iMproved, required
       autocmd FileType markdown,mkd call litecorrect#init()
       autocmd FileType textile call litecorrect#init()
     augroup END
+
+    " Toggle Undotree
+    nnoremap <F5> :UndotreeToggle<cr>
+
+    " Toggle Tagbar
+    nmap <F8> :TagbarToggle<CR>
 " }}}
 
 " Editing {{{
@@ -96,8 +100,12 @@ set nocompatible              " be iMproved, required
 " }}}
 
 " UI Layout {{{
-    colorscheme Tomorrow-Night  " Default theme
+    " Apply GUI font only to MacVim because VimR does not like it.
+    if has("gui_macvim")
+        set guifont=PragmataPro:h14
+    endif
 
+    colorscheme Tomorrow-Night  " Default theme
     " Choose theme according to Mojave dark mode
     if system("defaults read -g AppleInterfaceStyle") =~ '^Dark'
         colorscheme Tomorrow-Night
@@ -109,14 +117,14 @@ set nocompatible              " be iMproved, required
     endif
 
     set t_Co=256
-    set guifont=PragmataPro:h14
     set number              " show line numbers
     set relativenumber      " turn on relative line number
     set showcmd             " show command in bottom bar
     set nocursorline        " do not highlight current line, drastically improves speed
     set wildmenu            " visual autocomplete for command menu
     set showmatch           " highlight matching [{()}]
-    " toggles relative number mode
+
+    " Show relative number in normal mode
     augroup numbertoggle
       autocmd!
       autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
@@ -129,11 +137,6 @@ set nocompatible              " be iMproved, required
     set autochdir           " working directory is always the same as the file editing
     " toggles nerdtree with Ctrl-E
     nnoremap <C-e> :NERDTreeToggle<CR>
-    " some netrw settings
-    let g:netrw_liststyle = 3
-    let g:netrw_banner = 0
-    let g:netrw_browse_split = 4
-    let g:netrw_winsize = 25
 " }}}
 
 " Searching {{{
@@ -165,10 +168,13 @@ set nocompatible              " be iMproved, required
     nnoremap <leader>s :mksession<CR>
     " edit vimrc/zshrc and load vimrc bindings
     nnoremap <leader>ev :vsp $MYVIMRC<CR>
-    nnoremap <leader>ez :vsp ~/.zshrc<CR>
+    nnoremap <leader>ef :vsp ~/.config/fish/config.fish<CR>
     nnoremap <leader>so :source Session.vim<CR>
-    " shortcut to diable highlight
+    " shortcut to disable highlight
     nnoremap <leader><space> :nohlsearch<CR>
+    " go to the previous/next buffer
+    nnoremap <leader>p :bp<CR>
+    nnoremap <leader>n :bn<CR>
 " }}}
 
 " Shortcuts {{{
@@ -183,16 +189,16 @@ set nocompatible              " be iMproved, required
     vnoremap <D-c> "+y
     vnoremap <D-d> "+d
 
-    " Toggle Undotree
-    nnoremap <F5> :UndotreeToggle<cr>
+    " Use Ctrl-TAB to switch between buffers
+    nnoremap <C-TAB> :bn<CR>
 
     " Prettify JSON file using Python
     nmap =j :%!python -m json.tool<CR>
 
     " Open current document in Typora
-    nnoremap :Typora :silent !open -a Typora.app '%:p'<cr>
+    command Typora :silent !open -a Typora.app '%:p'<cr>
     " Open current document in Marked 2
-    nnoremap :Marked2 :silent !open -a Marked\ 2.app '%:p'<cr>
+    command Marked2 :silent !open -a Marked\ 2.app '%:p'<cr>
 " }}}
 
 " Syntax {{{
