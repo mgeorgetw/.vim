@@ -19,8 +19,6 @@ set nocompatible              " be iMproved, required
     Plugin 'easymotion/vim-easymotion'
     Plugin 'mbbill/undotree'
     Plugin 'reedes/vim-litecorrect'
-    Plugin 'reedes/vim-textobj-sentence'
-    Plugin 'reedes/vim-textobj-quote'
     Plugin 'reedes/vim-wordy'
     Plugin 'mattn/webapi-vim'
     Plugin 'tpope/vim-commentary'
@@ -40,7 +38,6 @@ set nocompatible              " be iMproved, required
     Plugin 'kchmck/vim-coffee-script'
     Plugin 'hail2u/vim-css3-syntax'
     Plugin 'gorodinskiy/vim-coloresque'
-    Plugin 'tpope/vim-haml'
     Plugin 'mattn/emmet-vim'
     Plugin 'tpope/vim-markdown'
     Plugin 'w0rp/ale'
@@ -55,6 +52,7 @@ set nocompatible              " be iMproved, required
     call vundle#end()            " required
     filetype plugin indent on    " required
 
+    """ Plugin configurations
     " Airline
     let g:airline#extensions#tabline#enabled = 1      " Enable the list of buffers
     let g:airline#extensions#tabline#fnamemod = ':t'  " Show just the filename
@@ -74,6 +72,13 @@ set nocompatible              " be iMproved, required
 
     " NERDTree
     let NERDTreeShowHidden=1
+
+    " Lite correct
+    augroup litecorrect
+      autocmd!
+      autocmd FileType markdown,mkd call litecorrect#init()
+      autocmd FileType textile call litecorrect#init()
+    augroup END
 " }}}
 
 " Editing {{{
@@ -177,6 +182,9 @@ set nocompatible              " be iMproved, required
     inoremap <D-v> <ESC>"+pa
     vnoremap <D-c> "+y
     vnoremap <D-d> "+d
+
+    " Toggle Undotree
+    nnoremap <F5> :UndotreeToggle<cr>
 
     " Prettify JSON file using Python
     nmap =j :%!python -m json.tool<CR>
