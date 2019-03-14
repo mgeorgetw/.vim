@@ -1,3 +1,4 @@
+set shell=/bin/bash
 set nocompatible              " be iMproved, required
 
 " Initiate plugins {{{
@@ -59,18 +60,30 @@ set nocompatible              " be iMproved, required
     " CtrlP
     let g:ctrlp_map = '<c-p>'
     let g:ctrlp_cmd = 'CtrlP'
+    let g:ctrlp_show_hidden = 1
     let g:ctrlp_working_path_mode = 'ra'
     set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
     set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
     let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
     let g:ctrlp_custom_ignore = {
     \ 'dir':  '\v[\/]\.(git|hg|svn)$',
-    \ 'file': '\v\.(exe|so|dll)$',
+    \ 'file': '\v\.(DS_Store|mp3|so|jpg|png|jpeg|swp|swo|swm|swn|swl|nmsv|session|history|historynew|pdf|tiff)$',
     \ }
     let g:ctrlp_user_command = 'find %s -type f'  " MacOSX/Linux
+    let g:ctrlp_user_command =
+    \ ['.git', 'cd %s && git ls-files -co --exclude-standard']
 
     " NERDTree
     let NERDTreeShowHidden=1
+    let NERDTreeWinSize=30
+    let NERDTreeQuitOnOpen=1
+    let NERDTreeShowLineNumbers=0
+
+    " vim-markdown
+    " Highlight YAML frontmatter of markdown
+    let g:vim_markdown_frontmatter=1
+    let g:vim_markdown_folding_disabled=1
+    let g:vim_markdown_conceal = 0
 
     " Lite correct
     augroup litecorrect
@@ -90,6 +103,14 @@ set nocompatible              " be iMproved, required
     set encoding=utf-8
     set virtualedit=all
     au FileType crontab setlocal bkc=yes  " enable saving crontab file
+    " Disable IME back to normal mode
+    set noimdisable
+    autocmd! InsertLeave * set imdisable|set iminsert=0
+    autocmd! InsertEnter * set noimdisable|set iminsert=0
+    " Enable mouse
+    if has('mouse')
+      set mouse=a
+    endif
 " }}}
 
 " Spaces and Tabs {{{
@@ -104,6 +125,8 @@ set nocompatible              " be iMproved, required
     " Apply GUI font only to MacVim because VimR does not like it.
     if has("gui_macvim")
         set guifont=PragmataPro:h14
+        set antialias
+        set gcr+=a:blinkon0
     endif
 
     colorscheme Tomorrow-Night  " Default theme
@@ -192,6 +215,7 @@ set nocompatible              " be iMproved, required
 
     " Use Ctrl-TAB to switch between buffers
     nnoremap <C-TAB> :bn<CR>
+    nnoremap <C-W> :bd<CR>
 
     " Prettify JSON file using Python
     nmap =j :%!python -m json.tool<CR>
