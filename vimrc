@@ -46,6 +46,7 @@ set nocompatible              " be iMproved, required
     Plugin 'chrisbra/Colorizer'
     Plugin 'Valloric/YouCompleteMe'
     Plugin 'NLKNguyen/papercolor-theme'
+    Plugin 'vim-scripts/applescript.vim'
     " All Plugins must be added before the following line
     call vundle#end()            " required
     filetype plugin indent on    " required
