@@ -34,7 +34,7 @@ Vim leader makes it easier to trigger oft-used functions. Here are some that I u
 - `,p` / `,n` goes to previous/next buffer.
 - `,<space>` un-highlights search results.
 - `,c<space>` toggles comment.
-- `,s` saves current working session.
+- `,ss` saves current working session.
 
 ### Open in Typora
 
@@ -44,7 +44,7 @@ Type `:Typora` and hit `return` will open current file in my [favorite Markdown 
 
 If I decide to write in Vim, [`:Marked2`](https://marked2app.com/) helps me see the results.
 
-### Emulate the system clipboard
+### Emulate the system clipboard (Only in MacVim)
 
 ```vimscript
 inoremap <D-v> <ESC>"+pa

@@ -16,7 +16,6 @@ set nocompatible              " be iMproved, required
     Plugin 'ctrlpvim/ctrlp.vim'
     Plugin 'tacahiroy/ctrlp-funky'
     Plugin 'rhysd/conflict-marker.vim'
-    Plugin 'vim-scripts/sessionman.vim'
     Plugin 'easymotion/vim-easymotion'
     Plugin 'mbbill/undotree'
     Plugin 'reedes/vim-litecorrect'
@@ -48,6 +47,8 @@ set nocompatible              " be iMproved, required
     Plugin 'Valloric/YouCompleteMe'
     Plugin 'NLKNguyen/papercolor-theme'
     Plugin 'vim-scripts/applescript.vim'
+    Plugin 'xolox/vim-session'
+    Plugin 'xolox/vim-misc'
     " All Plugins must be added before the following line
     call vundle#end()            " required
     filetype plugin indent on    " required
@@ -92,11 +93,6 @@ set nocompatible              " be iMproved, required
       autocmd FileType textile call litecorrect#init()
     augroup END
 
-    " Toggle Undotree
-    nnoremap <F5> :UndotreeToggle<cr>
-
-    " Toggle Tagbar
-    nmap <F8> :TagbarToggle<CR>
 " }}}
 
 " Editing {{{
@@ -154,6 +150,11 @@ set nocompatible              " be iMproved, required
       autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
       autocmd BufEnter,FocusLost,InsertEnter * set norelativenumber
     augroup END
+
+    " Cursor changes between modes.
+    let &t_SI.="\e[6 q" "SI = INSERT mode
+    let &t_SR.="\e[4 q" "SR = REPLACE mode
+    let &t_EI.="\e[2 q" "EI = NORMAL mode (ELSE)
 " }}}
 
 " Navigation {{{
@@ -188,17 +189,20 @@ set nocompatible              " be iMproved, required
 
 " Leader Shortcuts {{{
     let mapleader=","       " leader is comma
-    " save session
-    nnoremap <leader>s :mksession<CR>
-    " edit vimrc/zshrc and load vimrc bindings
-    nnoremap <leader>ev :vsp $MYVIMRC<CR>
+    " edit vimrc/fish and load vimrc bindings
+    nnoremap <leader>ev :vsp ~/.vim/vimrc<CR>
     nnoremap <leader>ef :vsp ~/.config/fish/config.fish<CR>
-    nnoremap <leader>so :source Session.vim<CR>
+    " reload vim
+    nnoremap <leader>rl :so $MYVIMRC<CR>
     " shortcut to disable highlight
     nnoremap <leader><space> :nohlsearch<CR>
     " go to the previous/next buffer
     nnoremap <leader>p :bp<CR>
     nnoremap <leader>n :bn<CR>
+
+    " Save/Open session with vim-session
+    nnoremap <leader>ss :SaveSession<space>
+    nnoremap <leader>so :OpenSession<space>
 " }}}
 
 " Shortcuts {{{
@@ -208,14 +212,23 @@ set nocompatible              " be iMproved, required
     " Copy and paste from system clipboard
     map "*y :w !LANG=en_US.UTF-8 pbcopy<CR><CR>
     map "*p :r !LANG=en_US.UTF-8 pbpaste<CR><CR>
-    " Emulate the system clipboard
+    inoremap <C-v> <ESC>"+pa
+    vnoremap <C-c> "*y
+    vnoremap <C-x> "*d
+    " Emulate the system clipboard(only in MacVim)
     inoremap <D-v> <ESC>"+pa
-    vnoremap <D-c> "+y
-    vnoremap <D-d> "+d
+    vnoremap <D-c> "*y
+    vnoremap <D-x> "*d
 
-    " Use Ctrl-TAB to switch between buffers
+    " Use Ctrl-TAB to switch between buffers (only in MacVim)
     nnoremap <C-TAB> :bn<CR>
     nnoremap <C-W> :bd<CR>
+
+    " Toggle Undotree
+    nnoremap <F5> :UndotreeToggle<cr>
+
+    " Toggle Tagbar
+    nmap <F8> :TagbarToggle<CR>
 
     " Prettify JSON file using Python
     nmap =j :%!python -m json.tool<CR>
