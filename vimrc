@@ -44,11 +44,15 @@ set nocompatible              " be iMproved, required
     Plugin 'nikvdp/ejs-syntax'
     Plugin 'scrooloose/nerdtree'
     Plugin 'chrisbra/Colorizer'
-    Plugin 'Valloric/YouCompleteMe'
     Plugin 'NLKNguyen/papercolor-theme'
     Plugin 'vim-scripts/applescript.vim'
     Plugin 'xolox/vim-session'
     Plugin 'xolox/vim-misc'
+    Plugin 'tpope/vim-fugitive'
+    Plugin 'skywind3000/asyncrun.vim'
+    Plugin 'prettier/vim-prettier', { 'do': 'yarn install', 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html'] }
+    let g:prettier#autoformat = 0
+    autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue,*.yaml,*.html PrettierAsync
     " All Plugins must be added before the following line
     call vundle#end()            " required
     filetype plugin indent on    " required
@@ -87,19 +91,27 @@ set nocompatible              " be iMproved, required
     let g:vim_markdown_conceal = 0
 
     " Lite correct
+    " Lightweight auto-correction for Vim
     augroup litecorrect
       autocmd!
       autocmd FileType markdown,mkd call litecorrect#init()
       autocmd FileType textile call litecorrect#init()
     augroup END
 
+    " Emmit
+    let g:user_emmet_leader_key='<Tab>'
+    let g:user_emmet_settings = {
+    \   'javascript.jsx' : {
+    \       'extends' : 'jsx',
+    \   },
+    \}
 " }}}
 
 " Editing {{{
     set encoding=utf-8
     set virtualedit=all
     au FileType crontab setlocal bkc=yes  " enable saving crontab file
-    " Disable IME back to normal mode
+    " Disable IME when switching to normal mode. Does not work with NeoVim
     set noimdisable
     autocmd! InsertLeave * set imdisable|set iminsert=0
     autocmd! InsertEnter * set noimdisable|set iminsert=0
@@ -110,11 +122,61 @@ set nocompatible              " be iMproved, required
 " }}}
 
 " Spaces and Tabs {{{
+    " Use the same symbols as TextMate for tabstops and EOLs
+    set listchars=tab:▸\ ,eol:¬
+    "Invisible character colors 
+    highlight NonText guifg=#4a4a59
+    highlight SpecialKey guifg=#4a4a59
+
     set tabstop=4       " number of visual spaces per TAB
     set shiftwidth=4
     set softtabstop=4   " number of spaces in tab when editing
     set expandtab       " tabs are spaces
     set backspace=indent,eol,start " make backspace work again
+
+    " Set tabstop, softtabstop and shiftwidth to the same value
+    command! -nargs=* Stab call Stab()
+    function! Stab()
+        let l:tabstop = 1 * input('set tabstop = softtabstop = shiftwidth = ')
+        if l:tabstop > 0
+            let &l:sts = l:tabstop
+            let &l:ts = l:tabstop
+            let &l:sw = l:tabstop
+        endif
+        call SummarizeTabs()
+    endfunction
+
+    function! SummarizeTabs()
+        try
+            echohl ModeMsg
+            echon 'tabstop='.&l:ts
+            echon ' shiftwidth='.&l:sw
+            echon ' softtabstop='.&l:sts
+            if &l:et
+                echon ' expandtab'
+            else
+                echon ' noexpandtab'
+            endif
+        finally
+            echohl None
+        endtry
+    endfunction
+
+    " Tidying whitespace (http://vimcasts.org/episodes/tidying-whitespace/)
+    function! Preserve(command)
+        " Preparation: save last search, and cursor position.
+        let _s=@/
+        let l = line(".")
+        let c = col(".")
+        " Do the business:
+        execute a:command
+        " Clean up: restore previous search history, and cursor position
+        let @/=_s
+        call cursor(l, c)
+    endfunction 
+
+    nmap _$ :call Preserve("%s/\\s\\+$//e")<CR>
+    nmap _= :call Preserve("normal gg=G")<CR>
 " }}}
 
 " UI Layout {{{
@@ -155,6 +217,7 @@ set nocompatible              " be iMproved, required
     let &t_SI.="\e[6 q" "SI = INSERT mode
     let &t_SR.="\e[4 q" "SR = REPLACE mode
     let &t_EI.="\e[2 q" "EI = NORMAL mode (ELSE)
+
 " }}}
 
 " Navigation {{{
@@ -203,6 +266,9 @@ set nocompatible              " be iMproved, required
     " Save/Open session with vim-session
     nnoremap <leader>ss :SaveSession<space>
     nnoremap <leader>so :OpenSession<space>
+
+    " Toggle invisible characters
+    nmap <leader>l :set list!<CR>
 " }}}
 
 " Shortcuts {{{
@@ -242,13 +308,30 @@ set nocompatible              " be iMproved, required
 " Syntax {{{
     syntax enable	    " enable syntax processing
 
+    " Omni Completion settings
+    set omnifunc=syntaxcomplete#Complete
+    set completeopt=menu,noinsert
+
     " Ale basic settings
     let g:airline#extensions#ale#enabled = 1  " Set this. Airline will handle the rest.
     let g:ale_completion_enabled = 1
     let g:ale_fixers = {
     \   'javascript': ['eslint'],
+    \   'typescript': ['prettier', 'tslint'],
+    \   'vue': ['eslint'],
+    \   'scss': ['prettier'],
+    \   'html': ['prettier'],
+    \   'reason': ['refmt'],
     \   'python': ['autopep8']
     \}
+    let g:ale_linters = {
+    \   'python': ['flake8', 'pylint'],
+    \   'javascript': ['eslint'],
+    \   'vue': ['eslint']
+    \}
+    let g:ale_sign_error = '●' " Less aggressive than the default '>>'
+    let g:ale_sign_warning = '.'
+    let g:ale_lint_on_enter = 0 " Less distracting when opening a new file
 
     autocmd BufNewFile,BufRead *.scss             set ft=scss.css
 " }}}
@@ -270,28 +353,29 @@ set nocompatible              " be iMproved, required
 " Auto Minification with yuicompressor
 " http://vim.wikia.com/wiki/Auto_execute_yuicompressor {{{
     function Js_css_compress ()
-      let cwd = expand('<afile>:p:h')
-      let nam = expand('<afile>:t:r')
-      let ext = expand('<afile>:e')
-      if -1 == match(nam, "[\._]src$")
-        let minfname = nam.".min.".ext
-      else
-        let minfname = substitute(nam, "[\._]src$", "", "g").".".ext
-      endif
-      if ext == 'less'
-        if executable('lessc')
-          cal system( 'lessc '.cwd.'/'.nam.'.'.ext.' &')
+        let cwd = expand('<afile>:p:h')
+        let nam = expand('<afile>:t:r')
+        let ext = expand('<afile>:e')
+        if -1 == match(nam, '[\._]src$')
+            let minfname = nam.'.min.'.ext
+        else
+            let minfname = substitute(nam, '[\._]src$', '', 'g').'.'.ext
         endif
-      else
-        if filewritable(cwd.'/'.minfname)
-          if ext == 'js' && executable('closure-compiler')
-            cal system( 'closure-compiler --js '.cwd.'/'.nam.'.'.ext.' > '.cwd.'/'.minfname.' &')
-          elseif executable('yuicompressor')
-            cal system( 'yuicompressor '.cwd.'/'.nam.'.'.ext.' > '.cwd.'/'.minfname.' &')
-          endif
+        if ext == 'less'
+            if executable('lessc')
+                cal system( 'lessc '.cwd.'/'.nam.'.'.ext.' &')
+            endif
+        else
+            if filewritable(cwd.'/'.minfname)
+                if ext == 'js' && executable('closure-compiler')
+                    cal system( 'closure-compiler --js '.cwd.'/'.nam.'.'.ext.' > '.cwd.'/'.minfname.' &')
+                elseif executable('yuicompressor')
+                    cal system( 'yuicompressor '.cwd.'/'.nam.'.'.ext.' > '.cwd.'/'.minfname.' &')
+                endif
+            endif
         endif
-      endif
     endfunction
     autocmd FileWritePost,BufWritePost *.js :call Js_css_compress()
     autocmd FileWritePost,BufWritePost *.css :call Js_css_compress()
-    autocmd FileWritePost,BufWritePost *.less :call Js_css_compress(" }}}
+    autocmd FileWritePost,BufWritePost *.less :call Js_css_compress()
+" }}}
