@@ -76,12 +76,6 @@ set nocompatible              " be iMproved, required
     let g:ctrlp_user_command =
     \ ['.git', 'cd %s && git ls-files -co --exclude-standard']
 
-    " Easymotion
-    map <leader> <Plug>(easymotion-prefix)
-    " <Leader>f{char} to move to {char}
-    map  <leader>f <Plug>(easymotion-bd-f)
-    nmap <leader>f <Plug>(easymotion-overwin-f)
-
     " NERDTree
     let NERDTreeShowHidden=1
     let NERDTreeWinSize=30
@@ -299,6 +293,13 @@ set nocompatible              " be iMproved, required
 
     " Toggle invisible characters
     nmap <leader>l :set list!<CR>
+
+    " Easymotion
+    map <leader> <Plug>(easymotion-prefix)
+    " <Leader>f{char} to move to {char}
+    map  <leader>f <Plug>(easymotion-bd-f)
+    nmap <leader>f <Plug>(easymotion-overwin-f)
+
 " }}}
 
 " Shortcuts {{{
