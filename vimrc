@@ -50,9 +50,7 @@ set nocompatible              " be iMproved, required
     Plugin 'xolox/vim-misc'
     Plugin 'tpope/vim-fugitive'
     Plugin 'skywind3000/asyncrun.vim'
-    Plugin 'prettier/vim-prettier', { 'do': 'yarn install', 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html'] }
-    let g:prettier#autoformat = 0
-    autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue,*.yaml,*.html PrettierAsync
+    Plugin 'suy/vim-context-commentstring'
     " All Plugins must be added before the following line
     call vundle#end()            " required
     filetype plugin indent on    " required
@@ -77,6 +75,12 @@ set nocompatible              " be iMproved, required
     let g:ctrlp_user_command = 'find %s -type f'  " MacOSX/Linux
     let g:ctrlp_user_command =
     \ ['.git', 'cd %s && git ls-files -co --exclude-standard']
+
+    " Easymotion
+    map <leader> <Plug>(easymotion-prefix)
+    " <Leader>f{char} to move to {char}
+    map  <leader>f <Plug>(easymotion-bd-f)
+    nmap <leader>f <Plug>(easymotion-overwin-f)
 
     " NERDTree
     let NERDTreeShowHidden=1
@@ -124,7 +128,7 @@ set nocompatible              " be iMproved, required
 " Spaces and Tabs {{{
     " Use the same symbols as TextMate for tabstops and EOLs
     set listchars=tab:▸\ ,eol:¬
-    "Invisible character colors 
+    "Invisible character colors
     highlight NonText guifg=#4a4a59
     highlight SpecialKey guifg=#4a4a59
 
@@ -133,6 +137,26 @@ set nocompatible              " be iMproved, required
     set softtabstop=4   " number of spaces in tab when editing
     set expandtab       " tabs are spaces
     set backspace=indent,eol,start " make backspace work again
+
+    " Only do this part when compiled with support for autocommands
+    if has("autocmd")
+      " Enable file type detection
+      filetype on
+
+      " Syntax of these languages is fussy over tabs Vs spaces
+      autocmd FileType make setlocal ts=8 sts=8 sw=8 noexpandtab
+      autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
+
+      " Customisations based on house-style (arbitrary)
+      autocmd FileType html setlocal ts=2 sts=2 sw=2 expandtab
+      autocmd FileType css setlocal ts=2 sts=2 sw=2 expandtab
+      autocmd FileType javascript setlocal ts=2 sts=2 sw=2 noexpandtab
+      autocmd FileType javascript.jsx setlocal ts=2 sts=2 sw=2 noexpandtab
+
+      " Treat .rss files as XML
+      autocmd BufNewFile,BufRead *.rss setfiletype xml
+      autocmd BufNewFile,BufRead *.txt setfiletype markdown
+    endif
 
     " Set tabstop, softtabstop and shiftwidth to the same value
     command! -nargs=* Stab call Stab()
@@ -173,13 +197,19 @@ set nocompatible              " be iMproved, required
         " Clean up: restore previous search history, and cursor position
         let @/=_s
         call cursor(l, c)
-    endfunction 
+    endfunction
 
     nmap _$ :call Preserve("%s/\\s\\+$//e")<CR>
     nmap _= :call Preserve("normal gg=G")<CR>
 " }}}
 
 " UI Layout {{{
+    " Apply GUI font only to MacVim because VimR does not like it.
+    if has("gui_macvim")
+        set guifont=PragmataPro:h14
+        set antialias
+        set gcr+=a:blinkon0
+    endif
     " Apply GUI font only to MacVim because VimR does not like it.
     if has("gui_macvim")
         set guifont=PragmataPro:h14
@@ -288,7 +318,7 @@ set nocompatible              " be iMproved, required
 
     " Use Ctrl-TAB to switch between buffers (only in MacVim)
     nnoremap <C-TAB> :bn<CR>
-    nnoremap <C-W> :bd<CR>
+    "nnoremap <C-W> :bd<CR>
 
     " Toggle Undotree
     nnoremap <F5> :UndotreeToggle<cr>
@@ -308,21 +338,18 @@ set nocompatible              " be iMproved, required
 " Syntax {{{
     syntax enable	    " enable syntax processing
 
-    " Omni Completion settings
-    set omnifunc=syntaxcomplete#Complete
-    set completeopt=menu,noinsert
-
     " Ale basic settings
     let g:airline#extensions#ale#enabled = 1  " Set this. Airline will handle the rest.
     let g:ale_completion_enabled = 1
     let g:ale_fixers = {
-    \   'javascript': ['eslint'],
+    \   'javascript': ['prettier', 'eslint'],
     \   'typescript': ['prettier', 'tslint'],
     \   'vue': ['eslint'],
     \   'scss': ['prettier'],
+    \   'css': ['prettier'],
     \   'html': ['prettier'],
     \   'reason': ['refmt'],
-    \   'python': ['autopep8']
+    \   'python': ['autopep8'],
     \}
     let g:ale_linters = {
     \   'python': ['flake8', 'pylint'],
@@ -332,6 +359,13 @@ set nocompatible              " be iMproved, required
     let g:ale_sign_error = '●' " Less aggressive than the default '>>'
     let g:ale_sign_warning = '.'
     let g:ale_lint_on_enter = 0 " Less distracting when opening a new file
+    " Set this variable to 1 to fix files when you save them.
+    let g:ale_fix_on_save = 1
+
+    " Omni Completion settings
+    "set omnifunc=syntaxcomplete#Complete
+    set omnifunc=ale#completion#OmniFunc
+    set completeopt=menu,preview,noselect,noinsert
 
     autocmd BufNewFile,BufRead *.scss             set ft=scss.css
 " }}}
