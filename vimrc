@@ -1,4 +1,4 @@
-set shell=/bin/bash
+set shell=/usr/local/bin/fish
 set nocompatible              " be iMproved, required
 
 " Initiate plugins {{{
@@ -113,6 +113,7 @@ set nocompatible              " be iMproved, required
     set noimdisable
     autocmd! InsertLeave * set imdisable|set iminsert=0
     autocmd! InsertEnter * set noimdisable|set iminsert=0
+    autocmd BufEnter * silent! lcd %:p:h
     " Enable mouse
     if has('mouse')
       set mouse=a
@@ -229,6 +230,8 @@ set nocompatible              " be iMproved, required
     set nocursorline        " do not highlight current line, drastically improves speed
     set wildmenu            " visual autocomplete for command menu
     set showmatch           " highlight matching [{()}]
+    set splitbelow          " More natural split opening
+    set splitright
 
     " Show relative number in normal mode
     augroup numbertoggle
@@ -264,6 +267,8 @@ set nocompatible              " be iMproved, required
     " space open/closes folds
     nnoremap <space> za
     set foldmethod=indent   " fold based on indent level
+    " Search for visually selected text
+    vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
 " }}}
 
 " Movement {{{
@@ -306,6 +311,8 @@ set nocompatible              " be iMproved, required
     " map ;; to Esc
     map! ;; <Esc>
 
+    " Set system keyboard as default
+    set clipboard=unnamed
     " Copy and paste from system clipboard
     map "*y :w !LANG=en_US.UTF-8 pbcopy<CR><CR>
     map "*p :r !LANG=en_US.UTF-8 pbpaste<CR><CR>
