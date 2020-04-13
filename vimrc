@@ -4,55 +4,60 @@ set nocompatible              " be iMproved, required
 " Initiate plugins {{{
     " Set the runtime path to include Vundle and initialize
     filetype off                  " required
-    set rtp+=~/.vim/bundle/Vundle.vim
-    call vundle#begin()
-    Plugin 'VundleVim/Vundle.vim' " let Vundle manage Vundle, required
-    Plugin 'vim-airline/vim-airline'
-    Plugin 'vim-airline/vim-airline-themes'
-    Plugin 'mileszs/ack.vim'
-    Plugin 'tpope/vim-surround'
-    Plugin 'tpope/vim-repeat'
-    Plugin 'jiangmiao/auto-pairs'
-    Plugin 'ctrlpvim/ctrlp.vim'
-    Plugin 'tacahiroy/ctrlp-funky'
-    Plugin 'rhysd/conflict-marker.vim'
-    Plugin 'easymotion/vim-easymotion'
-    Plugin 'mbbill/undotree'
-    Plugin 'reedes/vim-litecorrect'
-    Plugin 'reedes/vim-wordy'
-    Plugin 'mattn/webapi-vim'
-    Plugin 'tpope/vim-commentary'
-    Plugin 'majutsushi/tagbar'
-    Plugin 'godlygeek/tabular'
-    Plugin 'scrooloose/nerdcommenter'
-    Plugin 'mattn/gist-vim'
-    Plugin 'yssource/python.vim'
-    Plugin 'python_match.vim'
-    Plugin 'pythoncomplete'
-    Plugin 'elzr/vim-json'
-    Plugin 'groenewege/vim-less'
-    Plugin 'pangloss/vim-javascript'
-    Plugin 'jelera/vim-javascript-syntax'
-    Plugin 'isruslan/vim-es6'
-    Plugin 'mxw/vim-jsx'
-    Plugin 'kchmck/vim-coffee-script'
-    Plugin 'hail2u/vim-css3-syntax'
-    Plugin 'gorodinskiy/vim-coloresque'
-    Plugin 'mattn/emmet-vim'
-    Plugin 'tpope/vim-markdown'
-    Plugin 'w0rp/ale'
-    Plugin 'nikvdp/ejs-syntax'
-    Plugin 'scrooloose/nerdtree'
-    Plugin 'chrisbra/Colorizer'
-    Plugin 'NLKNguyen/papercolor-theme'
-    Plugin 'vim-scripts/applescript.vim'
-    Plugin 'xolox/vim-session'
-    Plugin 'xolox/vim-misc'
-    Plugin 'tpope/vim-fugitive'
-    Plugin 'skywind3000/asyncrun.vim'
-    Plugin 'suy/vim-context-commentstring'
+
+    " Automatically install vim-plug
+    if empty(glob('~/.vim/autoload/plug.vim'))
+      silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+        \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+      autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+    endif
+
+    call plug#begin('~/.vim/plugged')
+    " Plugins go here
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
+    Plug 'mileszs/ack.vim'
+    Plug 'tpope/vim-surround'
+    Plug 'tpope/vim-repeat'
+    Plug 'jiangmiao/auto-pairs'
+    Plug 'ctrlpvim/ctrlp.vim'
+    Plug 'tacahiroy/ctrlp-funky'
+    Plug 'rhysd/conflict-marker.vim'
+    Plug 'easymotion/vim-easymotion'
+    Plug 'mbbill/undotree'
+    Plug 'reedes/vim-litecorrect'
+    Plug 'reedes/vim-wordy'
+    Plug 'mattn/webapi-vim'
+    Plug 'tpope/vim-commentary'
+    Plug 'majutsushi/tagbar'
+    Plug 'godlygeek/tabular'
+    Plug 'scrooloose/nerdcommenter'
+    Plug 'mattn/gist-vim'
+    Plug 'yssource/python.vim'
+    Plug 'elzr/vim-json'
+    Plug 'groenewege/vim-less'
+    Plug 'pangloss/vim-javascript'
+    Plug 'jelera/vim-javascript-syntax'
+    Plug 'isruslan/vim-es6'
+    Plug 'mxw/vim-jsx'
+    Plug 'kchmck/vim-coffee-script'
+    Plug 'hail2u/vim-css3-syntax'
+    Plug 'gorodinskiy/vim-coloresque'
+    Plug 'mattn/emmet-vim'
+    Plug 'tpope/vim-markdown'
+    Plug 'w0rp/ale'
+    Plug 'nikvdp/ejs-syntax'
+    Plug 'scrooloose/nerdtree'
+    Plug 'chrisbra/Colorizer'
+    Plug 'NLKNguyen/papercolor-theme'
+    Plug 'vim-scripts/applescript.vim'
+    Plug 'xolox/vim-session'
+    Plug 'xolox/vim-misc'
+    Plug 'tpope/vim-fugitive'
+    Plug 'skywind3000/asyncrun.vim'
+    Plug 'suy/vim-context-commentstring'
     " All Plugins must be added before the following line
-    call vundle#end()            " required
+    call plug#end()
     filetype plugin indent on    " required
 
     """ Plugin configurations
