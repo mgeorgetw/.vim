@@ -6,8 +6,7 @@ This configuration mostly runs on [MacVim](https://github.com/macvim-dev/macvim)
 
 1. This folder belongs in home directory `~/.vim`
 
-2. Download and [install Vundle](https://github.com/VundleVim/Vundle.vim#quick-start) (a Vim plugin manager)
-3. Launch `vim` and run `:PluginInstall`
+2. Launch `vim`, and it will start installing [vim-plug](https://github.com/junegunn/vim-plug) and all plugins automatically.
 
 ## Styles
 
@@ -55,7 +54,7 @@ These key mappings allow me to use `⌘-v` and `⌘-c` like I normally do.
 
 ## Plugins
 
-- [Vundle](https://github.com/VundleVim/Vundle.vim) manages plugins.
+- [vim-plug](https://github.com/junegunn/vim-plug) manages plugins.
 - [vim-airline](https://github.com/vim-airline/vim-airline) enhances status bar.
 - [ack.vim](https://github.com/mileszs/ack.vim) searches text fast.
 - [vim-surround](https://github.com/tpope/vim-surround) simplifies parentheses, brackets, quotes, XML tags, and more.
@@ -64,9 +63,9 @@ These key mappings allow me to use `⌘-v` and `⌘-c` like I normally do.
 - [vim-easymotion](https://github.com/easymotion/vim-easymotion) helps cursor move really fast.
 - [nerdtree](https://github.com/scrooloose/nerdtree) explores file system.
 - [Colorizer](https://github.com/lilydjwg/colorizer) shows `#fff` in white.
-- [YouCompleteMe](https://github.com/Valloric/YouCompleteMe) completes code.
 - [emmet-vim](https://github.com/mattn/emmet-vim) improves HTML & CSS writing.
 - [TagBar](http://majutsushi.github.com/tagbar/) outlines code.
 - [ALE (Asynchronous Lint Engine)](https://github.com/w0rp/ale) checks syntax.
+- [Conquer of Completion](https://github.com/neoclide/coc.nvim) offers snippets like VSCode.
 
 and many more....
