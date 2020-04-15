@@ -103,7 +103,7 @@ set nocompatible              " be iMproved, required
     augroup END
 
     " Emmit
-    let g:user_emmet_leader_key='<Tab>'
+    let g:user_emmet_leader_key=','
     let g:user_emmet_settings = {
     \   'javascript.jsx' : {
     \       'extends' : 'jsx',
@@ -519,8 +519,8 @@ set nocompatible              " be iMproved, required
 
     " Omni Completion settings
     "set omnifunc=syntaxcomplete#Complete
-    set omnifunc=ale#completion#OmniFunc
-    set completeopt=menu,preview,noselect,noinsert
+    "set omnifunc=ale#completion#OmniFunc
+    "set completeopt=menu,preview,noselect,noinsert
 
     autocmd BufNewFile,BufRead *.scss             set ft=scss.css
 " }}}
