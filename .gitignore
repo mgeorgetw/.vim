@@ -1,4 +1,5 @@
 *.netrwhist
+/autoload
 /bundle
 /sessions
 /plugged
