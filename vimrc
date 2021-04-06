@@ -49,6 +49,7 @@ Plug 'nikvdp/ejs-syntax'
 Plug 'scrooloose/nerdtree'
 Plug 'chrisbra/Colorizer'
 Plug 'NLKNguyen/papercolor-theme'
+Plug 'joshdick/onedark.vim'
 Plug 'vim-scripts/applescript.vim'
 Plug 'xolox/vim-session'
 Plug 'xolox/vim-misc'
@@ -56,7 +57,10 @@ Plug 'tpope/vim-fugitive'
 Plug 'skywind3000/asyncrun.vim'
 Plug 'suy/vim-context-commentstring'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'machakann/vim-highlightedyank'
+Plug 'machakann/vim-highlightedyank',
+Plug 'nelstrom/vim-visual-star-search'
+Plug 'brglng/vim-im-select'
+Plug 'tpope/vim-haml'
 " All Plugins must be added before the following line
 call plug#end()
 filetype plugin indent on    " required
@@ -64,6 +68,7 @@ filetype plugin indent on    " required
 """ Plugin configurations
 " Airline
 let g:airline#extensions#tabline#enabled = 1      " Enable the list of buffers
+let g:airline#extensions#tabline#buffer_nr_show = 1 "Show buffer number
 let g:airline#extensions#tabline#fnamemod = ':t'  " Show just the filename
 
 " CtrlP
@@ -381,24 +386,26 @@ if has("gui_macvim")
     set antialias
     set gcr+=a:blinkon0
 endif
-" Apply GUI font only to MacVim because VimR does not like it.
-if has("gui_macvim")
-    set guifont=PragmataPro:h14
-    set antialias
-    set gcr+=a:blinkon0
+
+if (empty($TMUX))
+    if (has("nvim"))
+        let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+    endif
+    if (has("termguicolors"))
+        set termguicolors
+    endif
 endif
 
-colorscheme Tomorrow-Night  " Default theme
+colorscheme onedark  " Default theme
 " Choose theme according to Mojave dark mode
 if system("defaults read -g AppleInterfaceStyle") =~ '^Dark'
-    colorscheme Tomorrow-Night
-    let g:airline_theme='dark'
+    colorscheme onedark
+    let g:airline_theme='onedark'
 else
     set background=light
     colorscheme PaperColor
     let g:airline_theme='papercolor'
 endif
-
 set t_Co=256
 set number              " show line numbers
 set relativenumber      " turn on relative line number
@@ -408,6 +415,15 @@ set wildmenu            " visual autocomplete for command menu
 set showmatch           " highlight matching [{()}]
 set splitbelow          " More natural split opening
 set splitright
+
+""" Customize colors
+func! s:my_colors_setup() abort
+    hi CocInfoSign ctermfg=3 guifg=#808000
+endfunc
+
+augroup colorscheme_coc_setup | au!
+    au ColorScheme * call s:my_colors_setup()
+augroup END
 
 " Show relative number in normal mode
 augroup numbertoggle
@@ -497,6 +513,9 @@ nnoremap <leader><space> :nohlsearch<CR>
 " go to the previous/next buffer
 nnoremap <leader>p :bp<CR>
 nnoremap <leader>n :bn<CR>
+
+" Close buffer without closing the split window
+nnoremap <leader>d :b#<bar>bd#<CR>
 
 " Save/Open session with vim-session
 nnoremap <leader>ss :SaveSession<space>
